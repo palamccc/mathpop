@@ -120,10 +120,10 @@ export default function Home() {
 }
 
 function generateQuestion(): Question {
-  const num1 = int(2, 9);
+  const num1 = int(11, 99);
   const num2 = int(2, 9);
-  const ans = num1 * num2;
-  return new Question(ans, '÷', num2, num1);
+  const ans = num1 - num2;
+  return new Question(num1, '-', num2, ans);
 }
 
 function int(minIncluded: number, maxIncluded: number) {
