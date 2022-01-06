@@ -19,7 +19,7 @@ export default function Home() {
   }, [showResult]);
 
   const startTest = () => {
-    setQuestions(range(0, 10).map(() => generateQuestion()));
+    setQuestions(range(0, 15).map(() => generateQuestion()));
     setQIndex(0);
   };
   const goToNext = () => {
@@ -120,14 +120,37 @@ export default function Home() {
 }
 
 function generateQuestion(): Question {
-  const num1 = int(11, 99);
-  const num2 = int(2, 9);
-  const ans = num1 - num2;
-  return new Question(num1, '-', num2, ans);
+  const types = ['dd+d', 'dd-d', 'd*d', 'dd/d'];
+  const type = choose(types);
+  if (type === 'dd+d') {
+    const num1 = int(11, 99);
+    const num2 = int(2, 9);
+    const ans = num1 + num2;
+    return new Question(num1, '+', num2, ans);
+  } else if (type === 'dd-d') {
+    const num1 = int(11, 99);
+    const num2 = int(2, 9);
+    const ans = num1 - num2;
+    return new Question(num1, '-', num2, ans);
+  } else if (type === 'd*d') {
+    const num1 = int(2, 9);
+    const num2 = int(2, 9);
+    const ans = num1 * num2;
+    return new Question(num1, 'x', num2, ans);
+  } else {
+    const num1 = int(2, 9);
+    const num2 = int(2, 9);
+    const ans = num1 * num2;
+    return new Question(ans, '÷', num1, num2);
+  }
 }
 
 function int(minIncluded: number, maxIncluded: number) {
   return minIncluded + Math.floor(Math.random() * (maxIncluded - minIncluded + 1));
+}
+
+function choose<T>(vals: T[]): T {
+  return vals[int(0, vals.length - 1)];
 }
 
 class Question {
