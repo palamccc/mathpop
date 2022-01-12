@@ -1,11 +1,11 @@
 import ConfettiGenerator from 'confetti-js';
 import range from 'lodash/range';
-import { ChangeEvent, Fragment, KeyboardEvent, LegacyRef, useEffect, useState } from 'react';
+import React, { ChangeEvent, Fragment, KeyboardEvent, LegacyRef, useEffect, useState } from 'react';
 import { Button, LinkButton } from '../components/buttons';
 import { ProgressBar } from '../components/progress-bar';
 
 export default function Home() {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<AnyQ[]>([]);
   const [qIndex, setQIndex] = useState(-1);
   const [showResult, setShowResult] = useState(false);
 
@@ -40,16 +40,14 @@ export default function Home() {
             const bg = isCorrect ? 'bg-green-100' : 'bg-red-100';
             return (
               <div key={qi} className={`text-center text-2xl ${bg}`}>
-                {q.num1} {q.op} {q.num2} =
+                {q.getAnsweredText()}
                 {isCorrect && (
                   <span>
-                    &nbsp;{q.actualAnswer}
                     <span className="text-green-600">✓</span>
                   </span>
                 )}
                 {!isCorrect && (
                   <span>
-                    &nbsp;{q.actualAnswer}
                     <span className="text-red-700">✗</span>
                     &nbsp;{q.expectedAnswer}
                     <span className="text-green-600">✓</span>
@@ -100,10 +98,7 @@ export default function Home() {
         <ProgressBar percent={((qIndex + 1) * 100) / questions.length} />
         <div className="flex flex-col justify-center h-screen p-4 space-y-4">
           <div className="flex justify-center space-x-5 text-4xl">
-            <div>{q.num1}</div>
-            <div>{q.op}</div>
-            <div>{q.num2}</div>
-            <div>=</div>
+            {q.renderLHS()}
             <input
               type="number"
               className="bg-yellow-100 border-dashed border-red-500 border-b-2 w-16 text-center outline-0 focus:bg-yellow-200"
@@ -119,29 +114,37 @@ export default function Home() {
   }
 }
 
-function generateQuestion(): Question {
-  const types = ['dd+d', 'dd-d', 'd*d', 'dd/d'];
+function generateQuestion(): AnyQ {
+  // const types = ['dd+d', 'dd-d', 'd*d', 'dd/d', 'half of dd'];
+  const types = ['dd-d', 'd*d', 'dd/d', 'half of dd'];
   const type = choose(types);
   if (type === 'dd+d') {
     const num1 = int(11, 99);
     const num2 = int(2, 9);
     const ans = num1 + num2;
-    return new Question(num1, '+', num2, ans);
+    return new Math2OperantQ(num1, '+', num2, ans);
   } else if (type === 'dd-d') {
     const num1 = int(11, 99);
     const num2 = int(2, 9);
     const ans = num1 - num2;
-    return new Question(num1, '-', num2, ans);
+    return new Math2OperantQ(num1, '-', num2, ans);
   } else if (type === 'd*d') {
     const num1 = int(2, 9);
     const num2 = int(2, 9);
     const ans = num1 * num2;
-    return new Question(num1, 'x', num2, ans);
-  } else {
+    return new Math2OperantQ(num1, 'x', num2, ans);
+  } else if (type == 'dd/d') {
     const num1 = int(2, 9);
     const num2 = int(2, 9);
     const ans = num1 * num2;
-    return new Question(ans, '÷', num1, num2);
+    return new Math2OperantQ(ans, '÷', num1, num2);
+  } else if (type == 'half of dd') {
+    const num1 = int(1, 4) * 20;
+    const num2 = int(1, 4) * 2;
+    const qnum = num1 + num2;
+    return new MathFillQ(`Half of ${qnum} is`, qnum / 2);
+  } else {
+    throw new Error(`unknown ${type}`);
   }
 }
 
@@ -153,19 +156,47 @@ function choose<T>(vals: T[]): T {
   return vals[int(0, vals.length - 1)];
 }
 
-class Question {
+abstract class AnyQ {
   public actualAnswer: string = '';
-  constructor(
-    public num1: number,
-    public op: string,
-    public num2: number,
-    public expectedAnswer: number
-  ) {}
+  constructor(public expectedAnswer: number) {}
   isCorrect() {
     const numStr = this.actualAnswer.replace(/[^0-9]/g, '');
     if (numStr.length === 0) {
       return false;
     }
     return parseInt(numStr, 10) === this.expectedAnswer;
+  }
+  abstract getAnsweredText(): string;
+  abstract renderLHS(): React.ReactNode;
+}
+
+class Math2OperantQ extends AnyQ {
+  renderLHS(): React.ReactNode {
+    return (
+      <Fragment>
+        <div>{this.num1}</div>
+        <div>{this.op}</div>
+        <div>{this.num2}</div>
+        <div>=</div>
+      </Fragment>
+    );
+  }
+  constructor(public num1: number, public op: string, public num2: number, expectedAnswer: number) {
+    super(expectedAnswer);
+  }
+  getAnsweredText() {
+    return `${this.num1} ${this.op} ${this.num2} = ${this.actualAnswer}`;
+  }
+}
+
+class MathFillQ extends AnyQ {
+  renderLHS(): React.ReactNode {
+    return <div>{this.qtext}</div>;
+  }
+  constructor(public qtext: string, expectedAnswer: number) {
+    super(expectedAnswer);
+  }
+  getAnsweredText() {
+    return `${this.qtext} ${this.actualAnswer}`;
   }
 }
