@@ -117,7 +117,20 @@ export default function Home() {
 function generateQuestion(): AnyQ {
   // const types = ['dd+d', 'dd-d', 'd*d', 'dd/d', 'half of dd'];
   // const types = ['dd-d', 'd*d', 'dd/d', 'half of dd'];
-  const types = ['d*d', 'dd/d', '1ltddd', '1ltdddd', '1gtddd', '1gtdddd', 'd+d+d', 'dd+d+d'];
+  const types = [
+    'd*d',
+    'dd/d',
+    '1ltddd',
+    '1ltdddd',
+    '1gtddd',
+    '1gtdddd',
+    '1ltdd0',
+    '1ltddd0',
+    '1gtdd9',
+    '1gtddd9',
+    'd+d+d',
+    'dd+d+d',
+  ];
   const type = choose(types);
   if (type === 'dd+d') {
     const num1 = int(11, 99);
@@ -156,6 +169,18 @@ function generateQuestion(): AnyQ {
   } else if (type == '1gtdddd') {
     const num1 = int(1000, 9999);
     return new MathFillQ(`1 greater than ${num1}`, num1 + 1);
+  } else if (type == '1ltdd0') {
+    const num1 = int(10, 99) * 10;
+    return new MathFillQ(`1 less than ${num1}`, num1 - 1);
+  } else if (type == '1ltddd0') {
+    const num1 = int(100, 999) * 10;
+    return new MathFillQ(`1 less than ${num1}`, num1 - 1);
+  } else if (type == '1gtdd9') {
+    const num1 = int(10, 99) * 10;
+    return new MathFillQ(`1 greater than ${num1 - 1}`, num1);
+  } else if (type == '1gtddd9') {
+    const num1 = int(100, 999) * 10;
+    return new MathFillQ(`1 greater than ${num1 - 1}`, num1);
   } else if (type == 'd+d+d') {
     const num1 = int(2, 9);
     const num2 = int(2, 9);
