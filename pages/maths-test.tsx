@@ -84,7 +84,7 @@ export default function Home() {
       setQuestions([...questions]);
     };
     const onInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && q.actualAnswer.trim().length > 0) {
         goToNext();
       }
     };
@@ -97,7 +97,7 @@ export default function Home() {
       <Fragment>
         <ProgressBar percent={((qIndex + 1) * 100) / questions.length} />
         <div className="flex flex-col justify-center h-screen p-4 space-y-4">
-          <div className="flex justify-center space-x-5 text-4xl">
+          <div className="flex justify-center space-x-5 text-3xl">
             {q.renderLHS()}
             <input
               type="number"
