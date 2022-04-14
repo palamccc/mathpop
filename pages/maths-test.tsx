@@ -118,18 +118,19 @@ function generateQuestion(): AnyQ {
   // const types = ['dd+d', 'dd-d', 'd*d', 'dd/d', 'half of dd'];
   // const types = ['dd-d', 'd*d', 'dd/d', 'half of dd'];
   const types = [
-    'd*d',
-    'dd/d',
-    '1ltddd',
-    '1ltdddd',
-    '1gtddd',
-    '1gtdddd',
-    '1ltdd0',
-    '1ltddd0',
-    '1gtdd9',
-    '1gtddd9',
+    // 'd*d',
+    // 'dd/d',
+    // '1ltddd',
+    // '1ltdddd',
+    // '1gtddd',
+    // '1gtdddd',
+    // '1ltdd0',
+    // '1ltddd0',
+    // '1gtdd9',
+    // '1gtddd9',
     'd+d+d',
     'dd+d+d',
+    'dd-d',
   ];
   const type = choose(types);
   if (type === 'dd+d') {
@@ -191,6 +192,10 @@ function generateQuestion(): AnyQ {
     const num2 = int(2, 9);
     const num3 = int(2, 9);
     return new MathFillQ(`${num1} + ${num2} + ${num3} = `, num1 + num2 + num3);
+  } else if (type == 'dd-d') {
+    const num1 = int(11, 90);
+    const num2 = int(2, 9);
+    return new MathFillQ(`${num1} - ${num2} = `, num1 - num2);
   } else {
     throw new Error(`unknown ${type}`);
   }
