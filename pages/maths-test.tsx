@@ -128,9 +128,10 @@ function generateQuestion(): AnyQ {
     // '1ltddd0',
     // '1gtdd9',
     // '1gtddd9',
-    'd+d+d',
-    'dd+d+d',
-    'dd-d',
+    // 'd+d+d',
+    // 'dd+d+d',
+    // 'dd-d',
+    'ddd/d',
   ];
   const type = choose(types);
   if (type === 'dd+d') {
@@ -196,6 +197,11 @@ function generateQuestion(): AnyQ {
     const num1 = int(11, 90);
     const num2 = int(2, 9);
     return new MathFillQ(`${num1} - ${num2} = `, num1 - num2);
+  } else if (type == 'ddd/d') {
+    const num2 = int (2, 9);
+    const randNum1 = int(num2 * 11, 999);
+    const num1 = Math.round(randNum1 / num2) * num2;
+    return new MathFillQ(`${num1} / ${num2} = `, num1 / num2);
   } else {
     throw new Error(`unknown ${type}`);
   }
